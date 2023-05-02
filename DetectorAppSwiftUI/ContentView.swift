@@ -41,10 +41,6 @@ struct ContentView: View {
                     .ignoresSafeArea()
             }
 
-            WebView(urlString: webViewUrl)
-                .id(webViewUrl) // Add this line
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea()
         }
         .sheet(isPresented: $showSettings) {
             SettingsView(previewState: previewState)
