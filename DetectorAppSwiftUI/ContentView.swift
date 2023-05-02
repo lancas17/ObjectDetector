@@ -3,6 +3,8 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var previewState = PreviewState()
     @State private var showSettings = false
+    @State private var userInput = ""
+    @State private var webViewUrl = "http://192.168.43.118:3000"
 
     var body: some View {
         VStack {
@@ -24,7 +26,20 @@ struct ContentView: View {
             Text("My WebView")
                 .font(.system(size: 14, weight: .bold, design: .rounded))
                 .padding(.top, 10)
-            WebView(urlString: "https://google.com")
+
+            TextField("Enter text", text: $userInput)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+
+            Button(action: {
+                webViewUrl = "http://192.168.43.118:3000?input=\(userInput.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+            }) {
+                Text("Send")
+            }
+            .padding(.bottom)
+
+            WebView(urlString: webViewUrl)
+                .id(webViewUrl) // Add this line
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
         }
