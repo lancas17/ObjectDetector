@@ -13,6 +13,7 @@
 		6302C2A3289FBCAD00D61B61 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6302C2A2289FBCAD00D61B61 /* Preview Assets.xcassets */; };
 		6302C2AA289FBF5F00D61B61 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6302C2A9289FBF5F00D61B61 /* ViewController.swift */; };
 		63E9CD6728AACF1D00FD0BAA /* Detector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E9CD6628AACF1D00FD0BAA /* Detector.swift */; };
+		8463878E2A01B1FC0043174F /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8463878D2A01B1FC0043174F /* WebView.swift */; };
 		D0078E7029BF10A500025C9C /* yolov7.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = D0078E6F29BF10A500025C9C /* yolov7.mlmodel */; };
 		D0078E7229BF128400025C9C /* yolov7-tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = D0078E7129BF128400025C9C /* yolov7-tiny.mlmodel */; };
 		D021A9E629C7E1760005E67D /* doors_stairs.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = D021A9E529C7E1760005E67D /* doors_stairs.mlmodel */; };
@@ -29,6 +30,7 @@
 		6302C2A2289FBCAD00D61B61 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		6302C2A9289FBF5F00D61B61 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		63E9CD6628AACF1D00FD0BAA /* Detector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detector.swift; sourceTree = "<group>"; };
+		8463878D2A01B1FC0043174F /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		D0078E6F29BF10A500025C9C /* yolov7.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov7.mlmodel; sourceTree = "<group>"; };
 		D0078E7129BF128400025C9C /* yolov7-tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "yolov7-tiny.mlmodel"; sourceTree = "<group>"; };
 		D021A9E529C7E1760005E67D /* doors_stairs.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = doors_stairs.mlmodel; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				D0078E7129BF128400025C9C /* yolov7-tiny.mlmodel */,
 				6302C29F289FBCAD00D61B61 /* Assets.xcassets */,
 				6302C2A1289FBCAD00D61B61 /* Preview Content */,
+				8463878D2A01B1FC0043174F /* WebView.swift */,
 			);
 			path = DetectorAppSwiftUI;
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 				D0078E7229BF128400025C9C /* yolov7-tiny.mlmodel in Sources */,
 				D061CA5F29DFBA20009868B4 /* doors_4062023.mlmodel in Sources */,
 				63E9CD6728AACF1D00FD0BAA /* Detector.swift in Sources */,
+				8463878E2A01B1FC0043174F /* WebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

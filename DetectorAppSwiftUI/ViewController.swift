@@ -8,7 +8,8 @@ class PreviewState: ObservableObject {
     @Published var isPreviewEnabled: Bool = true
     @Published var models: [String: Bool] = [
         "yolov7": true,
-        "04172023_best": true
+        "04172023_best": true,
+        "doors_4062023": true
     ]
     @Published var confidenceThreshold: Double = 0.6
 }
@@ -31,10 +32,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var bestModelRequests = [VNRequest]()
     var yolov7DetectionLayer: CALayer! = nil
     var bestModelDetectionLayer: CALayer! = nil
+    var doorsModelDetectionLayer: CALayer! = nil
 
     
       
     override func viewDidLoad() {
+        super.viewDidLoad()
+            
+        // Initialize screenRect here
+        screenRect = UIScreen.main.bounds
+        
         checkPermission()
         
         sessionQueue.async { [unowned self] in
@@ -52,7 +59,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-        screenRect = UIScreen.main.bounds
+//        screenRect = UIScreen.main.bounds
         self.previewLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
         switch UIDevice.current.orientation {

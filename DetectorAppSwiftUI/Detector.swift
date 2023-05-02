@@ -10,10 +10,14 @@ extension ViewController {
         do {
             let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL!))
 
-            let completionHandler: VNRequestCompletionHandler = (modelName == "yolov7") ? { [weak self] request, error in
+            let completionHandler: VNRequestCompletionHandler = { [weak self] request, error in
+                if modelName == "yolov7" {
                 self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!)
-            } : { [weak self] request, error in
+                } else if modelName == "doors_4062023" {
+                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!)
+                } else {
                 self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!)
+                }
             }
 
             let recognitions = VNCoreMLRequest(model: visionModel, completionHandler: completionHandler)
@@ -67,15 +71,20 @@ extension ViewController {
         bestModelDetectionLayer = CALayer()
         bestModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
+        doorsModelDetectionLayer = CALayer()
+        doorsModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+
         DispatchQueue.main.async { [weak self] in
             self!.view.layer.addSublayer(self!.yolov7DetectionLayer)
             self!.view.layer.addSublayer(self!.bestModelDetectionLayer)
+            self!.view.layer.addSublayer(self!.doorsModelDetectionLayer)
         }
     }
 
     func updateLayers() {
         yolov7DetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
         bestModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+        doorsModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
     }
 
@@ -111,7 +120,14 @@ extension ViewController {
                 }
             } else {
                 // Remove bounding boxes when the model is disabled
-                let layer = (modelName == "yolov7") ? yolov7DetectionLayer : bestModelDetectionLayer
+                let layer: CALayer?
+                if modelName == "yolov7" {
+                    layer = yolov7DetectionLayer
+                } else if modelName == "doors_4062023" {
+                    layer = doorsModelDetectionLayer
+                } else {
+                    layer = bestModelDetectionLayer
+                }
                 DispatchQueue.main.async {
                     layer?.sublayers = nil
                 }

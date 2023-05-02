@@ -21,6 +21,12 @@ struct ContentView: View {
                     .font(.system(size: 24))
                     .padding()
             }
+            Text("My WebView")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .padding(.top, 10)
+            WebView(urlString: "https://google.com")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .ignoresSafeArea()
         }
         .sheet(isPresented: $showSettings) {
             SettingsView(previewState: previewState)
