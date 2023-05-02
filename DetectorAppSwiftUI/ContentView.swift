@@ -4,7 +4,7 @@ struct ContentView: View {
     @StateObject private var previewState = PreviewState()
     @State private var showSettings = false
     @State private var userInput = ""
-    @State private var webViewUrl = "http://192.168.43.118:3000"
+    @State private var webViewUrl = ""
 
     var body: some View {
         VStack {
@@ -23,20 +23,23 @@ struct ContentView: View {
                     .font(.system(size: 24))
                     .padding()
             }
-            Text("My WebView")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .padding(.top, 10)
+            TextField("Enter URL", text: $userInput)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding()
 
-            TextField("Enter text", text: $userInput)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-
-            Button(action: {
-                webViewUrl = "http://192.168.43.118:3000?input=\(userInput.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
-            }) {
-                Text("Send")
-            }
+                        Button(action: {
+                            webViewUrl = userInput
+                        }) {
+                            Text("Load URL")
+                        }
             .padding(.bottom)
+            
+            if !webViewUrl.isEmpty {
+                WebView(urlString: webViewUrl)
+                    .id(webViewUrl)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+            }
 
             WebView(urlString: webViewUrl)
                 .id(webViewUrl) // Add this line
