@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var userInput = ""
     @State private var webViewUrl = ""
+    @State private var showWebView = false
 
     var body: some View {
         VStack {
@@ -34,12 +35,19 @@ struct ContentView: View {
                         }
             .padding(.bottom)
             
-            if !webViewUrl.isEmpty {
+            if !webViewUrl.isEmpty && showWebView {
                 WebView(urlString: webViewUrl, previewState: previewState)
                     .id(webViewUrl)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 8)
                     .ignoresSafeArea()
             }
+            Button(action: {
+                showWebView.toggle()
+            }) {
+                Text(showWebView ? "Hide WebView" : "Show WebView")
+            }
+            .padding(.bottom)
+
 
         }
         .sheet(isPresented: $showSettings) {

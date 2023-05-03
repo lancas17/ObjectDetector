@@ -74,8 +74,10 @@ extension ViewController {
             ]
             objects.append(jsonObject)
         }
-        DispatchQueue.main.async { [weak self] in
-            self?.previewState.detectedObjects = objects
+        if !objects.isEmpty {
+            DispatchQueue.main.async { [weak self] in
+                self?.previewState.detectedObjects = objects
+            }
         }
     }
 
