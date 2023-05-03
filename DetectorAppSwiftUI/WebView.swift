@@ -79,6 +79,7 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
 
 struct WebView: UIViewRepresentable {
     let urlString: String
+    @State private var loadedUrl: String = ""
     @ObservedObject var previewState: PreviewState
 
     func makeCoordinator() -> WebViewCoordinator {
@@ -96,15 +97,19 @@ struct WebView: UIViewRepresentable {
 
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        if let url = URL(string: urlString) {
-            let request = URLRequest(url: url)
-            uiView.load(request)
-        } else {
-            print("Could not create URL")
+        if urlString != loadedUrl {
+            if let url = URL(string: urlString) {
+                let request = URLRequest(url: url)
+                uiView.load(request)
+                loadedUrl = urlString
+            } else {
+                print("Could not create URL")
+            }
         }
         
         context.coordinator.sendDetectedObjectsToWebView(uiView, detectedObjects: previewState.detectedObjects)
     }
+
 }
 
 extension String {
