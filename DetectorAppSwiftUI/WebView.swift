@@ -13,6 +13,9 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         setupHeartbeatTimer()
+        webView.isOpaque = false
+        webView.backgroundColor = UIColor.clear
+        webView.scrollView.backgroundColor = UIColor.clear
         webView.evaluateJavaScript("window.post_message?.('Hello, World!')") { (result, error) in
             if let error = error {
                 print("Error executing JavaScript: \(error.localizedDescription)")
@@ -21,6 +24,18 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
             }
         }
     }
+    
+    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        print("called webView with didReceive")
+        if let url = webView.url, url.host?.isIPAddress() == true, challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust, let trust = challenge.protectionSpace.serverTrust {
+            let credential = URLCredential(trust: trust)
+            completionHandler(.useCredential, credential)
+            print("if statement")
+        } else {
+            completionHandler(.performDefaultHandling, nil)
+        }
+    }
+
     
     func sendDetectedObjectsToWebView(_ webView: WKWebView, detectedObjects: [[String: Any]]) {
         do {
@@ -74,8 +89,11 @@ struct WebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let webView = context.coordinator.webView
         webView?.navigationDelegate = context.coordinator
+        webView?.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+//        webView?.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
         return webView ?? WKWebView()
     }
+
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
         if let url = URL(string: urlString) {
@@ -86,5 +104,16 @@ struct WebView: UIViewRepresentable {
         }
         
         context.coordinator.sendDetectedObjectsToWebView(uiView, detectedObjects: previewState.detectedObjects)
+    }
+}
+
+extension String {
+    func isIPAddress() -> Bool {
+        var sin = sockaddr_in()
+        var sin6 = sockaddr_in6()
+
+        return self.withCString { cstring in
+            return inet_pton(AF_INET6, cstring, &sin6.sin6_addr) == 1 || inet_pton(AF_INET, cstring, &sin.sin_addr) == 1
+        }
     }
 }

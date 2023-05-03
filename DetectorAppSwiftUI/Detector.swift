@@ -67,8 +67,10 @@ extension ViewController {
             let jsonObject: [String: Any] = [
                 "x": transformedBounds.origin.x,
                 "y": transformedBounds.origin.y,
-                "width": transformedBounds.size.width,
-                "height": transformedBounds.size.height,
+                "screenWidth": screenRect.size.width,
+                "screenHeight": screenRect.size.height,
+                "objectHeight": objectBounds.height,
+                "objectWidth": objectBounds.width,
                 "name": objectObservation.labels[0].identifier,
                 "confidence": objectObservation.confidence
             ]

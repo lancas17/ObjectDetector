@@ -8,53 +8,61 @@ struct ContentView: View {
     @State private var showWebView = false
 
     var body: some View {
-        VStack {
-            Text("Model: " + previewState.models.keys.sorted().joined(separator:", "))
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .padding(.top, 10)
+        ZStack {
+            VStack {
+//                Text("Model: " + previewState.models.keys.sorted().joined(separator:", "))
+//                    .font(.system(size: 14, weight: .bold, design: .rounded))
 
-            HostedViewController(previewState: previewState)
-                .ignoresSafeArea()
+                HostedViewController(previewState: previewState)
+                    .ignoresSafeArea()
+                    .padding(.top, 10)
 
-            Toggle("Preview", isOn: $previewState.isPreviewEnabled)
-                .padding()
-
-            Button(action: { showSettings.toggle() }) {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 24))
+                Toggle("Preview", isOn: $previewState.isPreviewEnabled)
                     .padding()
-            }
-            TextField("Enter URL", text: $userInput)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding()
 
-                        Button(action: {
-                            webViewUrl = userInput
-                        }) {
-                            Text("Load URL")
-                        }
-            .padding(.bottom)
+                Button(action: { showSettings.toggle() }) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 24))
+                        .padding()
+                }
+                if !showWebView {
+                    TextField("Enter URL", text: $userInput)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding()
+                    
+                    Button(action: {
+                        webViewUrl = userInput
+                    }) {
+                        Text("Load URL")
+                    }
+                    .padding(.bottom)
+                }
+                
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView(previewState: previewState)
+            }
             
             if !webViewUrl.isEmpty && showWebView {
                 WebView(urlString: webViewUrl, previewState: previewState)
                     .id(webViewUrl)
-                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Set the height to .infinity for full screen
                     .ignoresSafeArea()
             }
-            Button(action: {
-                showWebView.toggle()
-            }) {
-                Text(showWebView ? "Hide WebView" : "Show WebView")
+            
+            VStack {
+                Button(action: {
+                    showWebView.toggle()
+                }) {
+                    Text(showWebView ? "Hide WebView" : "Show WebView")
+                }
+                Spacer() // Add Spacer after the button to push it to the top of the vstack
+                .padding(.bottom)
             }
-            .padding(.bottom)
-
-
-        }
-        .sheet(isPresented: $showSettings) {
-            SettingsView(previewState: previewState)
         }
     }
 }
+
 
 
 struct ContentView_Previews: PreviewProvider {
