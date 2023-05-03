@@ -35,7 +35,7 @@ struct ContentView: View {
             .padding(.bottom)
             
             if !webViewUrl.isEmpty {
-                WebView(urlString: webViewUrl)
+                WebView(urlString: webViewUrl, previewState: previewState)
                     .id(webViewUrl)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()

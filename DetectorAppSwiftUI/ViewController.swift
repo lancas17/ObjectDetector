@@ -12,6 +12,7 @@ class PreviewState: ObservableObject {
         "doors_4062023": true
     ]
     @Published var confidenceThreshold: Double = 0.6
+    @Published var detectedObjects: [[String: Any]] = []
 }
 
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {

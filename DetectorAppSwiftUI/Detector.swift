@@ -38,6 +38,7 @@ extension ViewController {
 
     func extractDetections(_ results: [VNObservation], layer: CALayer) {
         layer.sublayers = nil
+        var objects: [[String: Any]] = []
 
         for observation in results where observation is VNRecognizedObjectObservation {
             print("observation")
@@ -61,6 +62,20 @@ extension ViewController {
             let labelText = "\(objectObservation.labels[0].identifier) \(String(format: "%.2f", objectObservation.confidence))"
             let textLayer = self.drawTextLayer(bounds: transformedBounds, labelText: labelText)
             layer.addSublayer(textLayer)
+            
+            // Put data into json object to send to webview
+            let jsonObject: [String: Any] = [
+                "x": transformedBounds.origin.x,
+                "y": transformedBounds.origin.y,
+                "width": transformedBounds.size.width,
+                "height": transformedBounds.size.height,
+                "name": objectObservation.labels[0].identifier,
+                "confidence": objectObservation.confidence
+            ]
+            objects.append(jsonObject)
+        }
+        DispatchQueue.main.async { [weak self] in
+            self?.previewState.detectedObjects = objects
         }
     }
 
