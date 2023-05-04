@@ -6,6 +6,7 @@ struct ContentView: View {
     @State private var userInput = ""
     @State private var webViewUrl = ""
     @State private var showWebView = false
+    @State private var toggleButton = false
 
     var body: some View {
         ZStack {
@@ -55,6 +56,11 @@ struct ContentView: View {
                     showWebView.toggle()
                 }) {
                     Text(showWebView ? "Hide WebView" : "Show WebView")
+                }
+                Button(action: {
+                    toggleButton.toggle()
+                }) {
+                    Text(toggleButton ? "Toggle On" : "Toggle Off")
                 }
                 Spacer() // Add Spacer after the button to push it to the top of the vstack
                 .padding(.bottom)
