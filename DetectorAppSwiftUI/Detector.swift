@@ -12,11 +12,11 @@ extension ViewController {
 
             let completionHandler: VNRequestCompletionHandler = { [weak self] request, error in
                 if modelName == "yolov7" {
-                self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName)
+                    self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName: modelName)
                 } else if modelName == "doors_4062023" {
-                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!, modelName)
+                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!, modelName: modelName)
                 } else {
-                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName)
+                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName: modelName)
                 }
             }
 
@@ -31,7 +31,7 @@ extension ViewController {
     func detectionDidComplete(request: VNRequest, error: Error?, layer: CALayer, modelName: String) {
         DispatchQueue.main.async(execute: {
             if let results = request.results {
-                self.extractDetections(results, layer: layer, modelName)
+                self.extractDetections(results, layer: layer, modelName: modelName)
             }
         })
     }
