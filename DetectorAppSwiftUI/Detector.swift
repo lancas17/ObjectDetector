@@ -12,11 +12,11 @@ extension ViewController {
 
             let completionHandler: VNRequestCompletionHandler = { [weak self] request, error in
                 if modelName == "yolov7" {
-                self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!)
+                self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName)
                 } else if modelName == "doors_4062023" {
-                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!)
+                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!, modelName)
                 } else {
-                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!)
+                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName)
                 }
             }
 
@@ -28,15 +28,15 @@ extension ViewController {
         }
     }
     
-    func detectionDidComplete(request: VNRequest, error: Error?, layer: CALayer) {
+    func detectionDidComplete(request: VNRequest, error: Error?, layer: CALayer, modelName: String) {
         DispatchQueue.main.async(execute: {
             if let results = request.results {
-                self.extractDetections(results, layer: layer)
+                self.extractDetections(results, layer: layer, modelName)
             }
         })
     }
 
-    func extractDetections(_ results: [VNObservation], layer: CALayer) {
+    func extractDetections(_ results: [VNObservation], layer: CALayer, modelName: String) {
         layer.sublayers = nil
         var objects: [[String: Any]] = []
 
@@ -72,15 +72,23 @@ extension ViewController {
                 "objectHeight": objectBounds.height,
                 "objectWidth": objectBounds.width,
                 "name": objectObservation.labels[0].identifier,
-                "confidence": objectObservation.confidence
+                "confidence": objectObservation.confidence,
             ]
             objects.append(jsonObject)
         }
-        if !objects.isEmpty {
-            DispatchQueue.main.async { [weak self] in
-                self?.previewState.detectedObjects = objects
-            }
-        }
+//        if !objects.isEmpty {
+                DispatchQueue.main.async { [weak self] in
+                    if let base64ImageString = self?.previewState.base64ImageString {
+                        let jsonObject: [String: Any] = [
+                            "detectedObjects": objects,
+                            "base64ImageString": base64ImageString,
+                            "model": modelName,
+                        ]
+                        self?.previewState.detectedObjects = jsonObject
+                        // Send JSON object to webView
+                    }
+                }
+//            }
     }
 
     func setupLayers() {
@@ -130,6 +138,14 @@ extension ViewController {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
 
+        // Convert pixel buffer to UIImage and then to base64 encoded string
+        if let image = pixelBufferToUIImage(pixelBuffer: pixelBuffer),
+           let base64ImageString = imageToBase64(image: image) {
+            DispatchQueue.main.async { [weak self] in
+                self?.previewState.base64ImageString = base64ImageString
+            }
+        }
+
         for (modelName, isEnabled) in previewState.models {
             if isEnabled {
                 do {
@@ -153,4 +169,24 @@ extension ViewController {
             }
         }
     }
+
+    
+    func pixelBufferToUIImage(pixelBuffer: CVPixelBuffer) -> UIImage? {
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let context = CIContext(options: nil)
+        if let cgImage = context.createCGImage(ciImage, from: ciImage.extent) {
+            let image = UIImage(cgImage: cgImage)
+            return image
+        }
+        return nil
+    }
+
+    
+    func imageToBase64(image: UIImage) -> String? {
+        let imageData = image.jpegData(compressionQuality: 0.5)
+        return imageData?.base64EncodedString()
+    }
+
+    
+    
 }

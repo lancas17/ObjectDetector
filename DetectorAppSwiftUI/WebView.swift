@@ -5,7 +5,7 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
     var parent: WebView
     var heartbeatTimer: Timer?
     var webView: WKWebView
-    private var detectedObjects: [[String: Any]] = []
+    private var detectedObjects: [String: Any] = [:]
 
     init(_ parent: WebView, webView: WKWebView) {
         self.parent = parent
@@ -17,7 +17,8 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
         webView.isOpaque = false
         webView.backgroundColor = UIColor.clear
         webView.scrollView.backgroundColor = UIColor.clear
-        executeJavascript(webView, script: "window.post_message?.('Hello, World!')")
+        let javascript = "window.post_message?.({\"type\": \"connected\"})"
+        executeJavascript(webView, script: javascript)
     }
 
     func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
@@ -29,11 +30,11 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
         }
     }
 
-    func sendDetectedObjectsToWebView(_ webView: WKWebView, detectedObjects: [[String: Any]]) {
+    func sendDetectedObjectsToWebView(_ webView: WKWebView, detectedObjects: [String: Any]) {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: detectedObjects, options: [])
             let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-            let javascript = "window.post_message?.('{\"type\": \"detectedObjects\", \"objects\": \(jsonString)}')"
+            let javascript = "window.post_message?.({\"type\": \"detectedObjects\", \"objects\": \(jsonString)})"
             executeJavascript(webView, script: javascript)
         } catch {
             print("Error creating JSON data: \(error.localizedDescription)")
@@ -49,7 +50,7 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
     }
 
     func sendHeartbeatToServer(_ webView: WKWebView) {
-        let javascript = "window.post_message?.('{\"type\": \"heartbeat\"}')"
+        let javascript = "window.post_message?.({\"type\": \"heartbeat\"})"
         executeJavascript(webView, script: javascript)
     }
 
@@ -67,7 +68,7 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
         heartbeatTimer?.invalidate()
     }
 
-    func updateDetectedObjects(detectedObjects: [[String: Any]]) {
+    func updateDetectedObjects(detectedObjects: [String: Any]) {
         do {
             let newJSONData = try JSONSerialization.data(withJSONObject: detectedObjects, options: [])
             let newJSONString = String(data: newJSONData, encoding: .utf8) ?? ""
