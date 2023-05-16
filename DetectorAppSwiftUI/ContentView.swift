@@ -57,11 +57,6 @@ struct ContentView: View {
                 }) {
                     Text(showWebView ? "Hide WebView" : "Show WebView")
                 }
-                Button(action: {
-                    toggleButton.toggle()
-                }) {
-                    Text(toggleButton ? "Toggle On" : "Toggle Off")
-                }
                 Spacer() // Add Spacer after the button to push it to the top of the vstack
                 .padding(.bottom)
             }

@@ -303,7 +303,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DetectorAppSwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = 754V77X9Z9;
+				DEVELOPMENT_TEAM = AAQNZP54R6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App uses camera to detect objects.";
@@ -333,7 +333,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DetectorAppSwiftUI/Preview Content\"";
-				DEVELOPMENT_TEAM = 754V77X9Z9;
+				DEVELOPMENT_TEAM = AAQNZP54R6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App uses camera to detect objects.";

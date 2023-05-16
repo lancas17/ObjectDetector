@@ -11,13 +11,14 @@ extension ViewController {
             let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL!))
 
             let completionHandler: VNRequestCompletionHandler = { [weak self] request, error in
-                if modelName == "yolov7" {
-                    self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName: modelName)
-                } else if modelName == "doors_4062023" {
-                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!, modelName: modelName)
-                } else {
+//                if modelName == "yolov7" {
+//                    self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName: modelName)
+//                } else if modelName == "doors_4062023" {
+//                    self?.detectionDidComplete(request: request, error: error, layer: (self?.doorsModelDetectionLayer)!, modelName: modelName)
+//                } else {
+//                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName: modelName)
+//                }
                 self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName: modelName)
-                }
             }
 
             let recognitions = VNCoreMLRequest(model: visionModel, completionHandler: completionHandler)
@@ -34,6 +35,31 @@ extension ViewController {
                 self.extractDetections(results, layer: layer, modelName: modelName)
             }
         })
+    }
+    
+    func rotateImageCCW(image: UIImage) -> UIImage? {
+        UIGraphicsBeginImageContext(CGSize(width: image.size.height, height: image.size.width))
+        let context = UIGraphicsGetCurrentContext()!
+        context.rotate(by: -.pi/2)
+        image.draw(at: CGPoint(x: -image.size.width, y: 0))
+        let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return rotatedImage
+    }
+    
+    func rotateImageCW(image: UIImage) -> UIImage? {
+        UIGraphicsBeginImageContext(CGSize(width: image.size.height, height: image.size.width))
+        let context = UIGraphicsGetCurrentContext()!
+        context.rotate(by: .pi/2)
+        image.draw(at: CGPoint(x: 0, y: -image.size.height))
+        let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return rotatedImage
+    }
+    
+    func rotateRect(rect: CGRect, within size: CGSize) -> CGRect {
+        let origin = CGPoint(x: rect.minY, y: size.width - rect.maxX)
+        return CGRect(origin: origin, size: CGSize(width: rect.height, height: rect.width))
     }
 
     func extractDetections(_ results: [VNObservation], layer: CALayer, modelName: String) {
@@ -53,8 +79,13 @@ extension ViewController {
             let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
             print("id:\(objectObservation.labels[0].identifier) confidence:\(objectObservation.confidence) (\(round(objectBounds.minX)), \(round(objectBounds.minY))), (\(round(objectBounds.maxX)), \(round(objectBounds.maxY)))")
             let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+            
+//            let rotatedBounds = rotateRect(rect: transformedBounds, within: screenRect.size)
 
             let boxLayer = self.drawBoundingBox(transformedBounds)
+            
+//            let boxLayer = self.drawBoundingBox(rotatedBounds)
+
 
             layer.addSublayer(boxLayer)
 
@@ -67,6 +98,8 @@ extension ViewController {
             let jsonObject: [String: Any] = [
                 "x": transformedBounds.origin.x,
                 "y": transformedBounds.origin.y,
+//                "x": rotatedBounds.origin.x,
+//                "y": rotatedBounds.origin.y,
                 "screenWidth": screenRect.size.width,
                 "screenHeight": screenRect.size.height,
                 "objectHeight": objectBounds.height,
@@ -92,26 +125,26 @@ extension ViewController {
     }
 
     func setupLayers() {
-        yolov7DetectionLayer = CALayer()
-        yolov7DetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//        yolov7DetectionLayer = CALayer()
+//        yolov7DetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
         bestModelDetectionLayer = CALayer()
         bestModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
-
-        doorsModelDetectionLayer = CALayer()
-        doorsModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//
+//        doorsModelDetectionLayer = CALayer()
+//        doorsModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
         DispatchQueue.main.async { [weak self] in
-            self!.view.layer.addSublayer(self!.yolov7DetectionLayer)
+//            self!.view.layer.addSublayer(self!.yolov7DetectionLayer)
             self!.view.layer.addSublayer(self!.bestModelDetectionLayer)
-            self!.view.layer.addSublayer(self!.doorsModelDetectionLayer)
+//            self!.view.layer.addSublayer(self!.doorsModelDetectionLayer)
         }
     }
 
     func updateLayers() {
-        yolov7DetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//        yolov7DetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
         bestModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
-        doorsModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//        doorsModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
     }
 
@@ -136,11 +169,20 @@ extension ViewController {
     }
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
 
-        // Convert pixel buffer to UIImage and then to base64 encoded string
-        if let image = pixelBufferToUIImage(pixelBuffer: pixelBuffer),
-           let base64ImageString = imageToBase64(image: image) {
+        // Convert pixel buffer to UIImage
+        guard let image = pixelBufferToUIImage(pixelBuffer: pixelBuffer) else { return }
+
+        // Rotate the image before sending to the model
+        guard let rotatedImageForModel = rotateImageCCW(image: image) else { return }
+        
+        // Prepare the image for the model
+        guard let rotatedPixelBuffer = pixelBufferFrom(uiImage: rotatedImageForModel) else { return }
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: rotatedPixelBuffer, orientation: .up, options: [:])
+
+        // Convert the rotated image back to the original orientation and then to base64 encoded string
+        if let originalOrientationImage = rotateImageCW(image: rotatedImageForModel),
+           let base64ImageString = imageToBase64(image: originalOrientationImage) {
             DispatchQueue.main.async { [weak self] in
                 self?.previewState.base64ImageString = base64ImageString
             }
@@ -154,21 +196,40 @@ extension ViewController {
                     print(error)
                 }
             } else {
-                // Remove bounding boxes when the model is disabled
-                let layer: CALayer?
-                if modelName == "yolov7" {
-                    layer = yolov7DetectionLayer
-                } else if modelName == "doors_4062023" {
-                    layer = doorsModelDetectionLayer
-                } else {
-                    layer = bestModelDetectionLayer
-                }
+                let layer = bestModelDetectionLayer
                 DispatchQueue.main.async {
                     layer?.sublayers = nil
                 }
             }
         }
     }
+
+    func pixelBufferFrom(uiImage: UIImage) -> CVPixelBuffer? {
+        let ciImage = CIImage(image: uiImage)
+        let context = CIContext(options: nil)
+        guard let cgImage = context.createCGImage(ciImage!, from: ciImage!.extent) else { return nil }
+
+        let pixelBufferAttributes: [String: Any] = [
+            kCVPixelBufferCGImageCompatibilityKey as String: true,
+            kCVPixelBufferCGBitmapContextCompatibilityKey as String: true,
+        ]
+
+        var pxbuffer: CVPixelBuffer?
+        let status = CVPixelBufferCreate(kCFAllocatorDefault, cgImage.width, cgImage.height, kCVPixelFormatType_32ARGB, pixelBufferAttributes as CFDictionary, &pxbuffer)
+        guard status == kCVReturnSuccess else { return nil }
+
+        CVPixelBufferLockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0))
+        let pxdata = CVPixelBufferGetBaseAddress(pxbuffer!)
+
+        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(data: pxdata, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(pxbuffer!), space: rgbColorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else { return nil }
+
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        CVPixelBufferUnlockBaseAddress(pxbuffer!, CVPixelBufferLockFlags(rawValue: 0))
+
+        return pxbuffer
+    }
+
 
     
     func pixelBufferToUIImage(pixelBuffer: CVPixelBuffer) -> UIImage? {

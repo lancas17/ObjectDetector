@@ -7,9 +7,9 @@ import Combine
 class PreviewState: ObservableObject {
     @Published var isPreviewEnabled: Bool = true
     @Published var models: [String: Bool] = [
-        "yolov7": true,
-        "04172023_best": true,
-        "doors_4062023": true
+//        "yolov7": true,
+        "04172023_best": true
+//        "doors_4062023": true
     ]
     @Published var confidenceThreshold: Double = 0.6
     @Published var detectedObjects: [String: Any] = [:]
@@ -30,11 +30,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var videoOutput = AVCaptureVideoDataOutput()
 
     var requests: [String: [VNRequest]] = [:]
-    var yolov7Requests = [VNRequest]()
+//    var yolov7Requests = [VNRequest]()
+//    var doorsModelRequests = [VNRequest]()
     var bestModelRequests = [VNRequest]()
-    var yolov7DetectionLayer: CALayer! = nil
+//    var yolov7DetectionLayer: CALayer! = nil
     var bestModelDetectionLayer: CALayer! = nil
-    var doorsModelDetectionLayer: CALayer! = nil
+//    var doorsModelDetectionLayer: CALayer! = nil
 
     
       
@@ -61,33 +62,37 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-//        screenRect = UIScreen.main.bounds
-        self.previewLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
-
-        switch UIDevice.current.orientation {
+        coordinator.animate(alongsideTransition: { _ in
+            self.screenRect = UIScreen.main.bounds
+            self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.screenRect.size.width, height: self.screenRect.size.height)
+        }, completion: { _ in
+            // Update the video orientation based on the new device orientation
+            switch UIDevice.current.orientation {
             // Home button on top
-            case UIDeviceOrientation.portraitUpsideDown:
+            case .portraitUpsideDown:
                 self.previewLayer.connection?.videoOrientation = .portraitUpsideDown
              
             // Home button on right
-            case UIDeviceOrientation.landscapeLeft:
+            case .landscapeLeft:
                 self.previewLayer.connection?.videoOrientation = .landscapeRight
             
             // Home button on left
-            case UIDeviceOrientation.landscapeRight:
+            case .landscapeRight:
                 self.previewLayer.connection?.videoOrientation = .landscapeLeft
              
             // Home button at bottom
-            case UIDeviceOrientation.portrait:
+            case .portrait:
                 self.previewLayer.connection?.videoOrientation = .portrait
                 
             default:
                 break
             }
-        
-        // Detector
-        updateLayers()
+
+            // Detector
+            self.updateLayers()
+        })
     }
+
     
     // Add this method to the ViewController class
     func setupBindings() {
