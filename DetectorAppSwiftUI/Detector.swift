@@ -18,7 +18,7 @@ extension ViewController {
 //                } else {
 //                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName: modelName)
 //                }
-                self?.detectionDidComplete(request: request, error: error, layer: (self?.bestModelDetectionLayer)!, modelName: modelName)
+                self?.detectionDidComplete(request: request, error: error, layer: (self?.yolov7DetectionLayer)!, modelName: modelName)
             }
 
             let recognitions = VNCoreMLRequest(model: visionModel, completionHandler: completionHandler)
@@ -125,25 +125,25 @@ extension ViewController {
     }
 
     func setupLayers() {
-//        yolov7DetectionLayer = CALayer()
-//        yolov7DetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+        yolov7DetectionLayer = CALayer()
+        yolov7DetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
-        bestModelDetectionLayer = CALayer()
-        bestModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//        bestModelDetectionLayer = CALayer()
+//        bestModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 //
 //        doorsModelDetectionLayer = CALayer()
 //        doorsModelDetectionLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
         DispatchQueue.main.async { [weak self] in
-//            self!.view.layer.addSublayer(self!.yolov7DetectionLayer)
-            self!.view.layer.addSublayer(self!.bestModelDetectionLayer)
+            self!.view.layer.addSublayer(self!.yolov7DetectionLayer)
+//            self!.view.layer.addSublayer(self!.bestModelDetectionLayer)
 //            self!.view.layer.addSublayer(self!.doorsModelDetectionLayer)
         }
     }
 
     func updateLayers() {
-//        yolov7DetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
-        bestModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+        yolov7DetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+//        bestModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 //        doorsModelDetectionLayer?.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
 
     }
@@ -196,7 +196,7 @@ extension ViewController {
                     print(error)
                 }
             } else {
-                let layer = bestModelDetectionLayer
+                let layer = yolov7DetectionLayer
                 DispatchQueue.main.async {
                     layer?.sublayers = nil
                 }

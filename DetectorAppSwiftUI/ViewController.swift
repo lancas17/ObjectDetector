@@ -7,8 +7,8 @@ import Combine
 class PreviewState: ObservableObject {
     @Published var isPreviewEnabled: Bool = true
     @Published var models: [String: Bool] = [
-//        "yolov7": true,
-        "04172023_best": true
+        "yolov7": true,
+//        "04172023_best": true
 //        "doors_4062023": true
     ]
     @Published var confidenceThreshold: Double = 0.6
@@ -30,11 +30,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var videoOutput = AVCaptureVideoDataOutput()
 
     var requests: [String: [VNRequest]] = [:]
-//    var yolov7Requests = [VNRequest]()
+    var yolov7Requests = [VNRequest]()
 //    var doorsModelRequests = [VNRequest]()
-    var bestModelRequests = [VNRequest]()
-//    var yolov7DetectionLayer: CALayer! = nil
-    var bestModelDetectionLayer: CALayer! = nil
+//    var bestModelRequests = [VNRequest]()
+    var yolov7DetectionLayer: CALayer! = nil
+//    var bestModelDetectionLayer: CALayer! = nil
 //    var doorsModelDetectionLayer: CALayer! = nil
 
     
